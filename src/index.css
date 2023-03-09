@@ -17,7 +17,7 @@ body {
   margin: 0 auto;
   padding: 35px 40px 35px;
   max-width: 700px;
-  min-height: 550px;
+  min-height: 600px;
   text-align: center;
   background-color: #f5f7fb;
 }
@@ -74,7 +74,6 @@ body {
   flex-direction: column;
   justify-content: space-between;
   max-width: 90%;
-  height: 80%;
   text-align: left;
 }
 
@@ -91,7 +90,7 @@ body {
 
 .answer--btn {
   padding: 0.3em 0.6em 0.36em;
-  margin: 0.6em 0.6em 0 0;
+  margin: 0.8em 0.6em 0 0;
   font-size: 0.79rem;
   font-weight: 500;
   color: #293264;
@@ -104,4 +103,20 @@ body {
   align-self: center;
   width: 150px;
   font-size: 0.875rem;
+}
+
+.end--game__footer {
+  display: flex;
+  align-items: center;
+  justify-content: end;
+}
+
+.end--game__footer > h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.restart--btn {
+  margin: 0.58em 1em;
+  padding: 0.6em 1.4em;
 }

@@ -1,52 +1,100 @@
 import { useEffect, useState } from "react";
 import { nanoid } from "nanoid";
+import { shuffle, decodedString } from "./utils";
 import StartScreen from "./components/StartScreen";
 import BackgroundImages from "./components/BackgroundImages";
 import Quiz from "./components/Quiz";
 
 const App = () => {
-  const [isOnStartScreen, setIsOnStartScreen] = useState(true);
-  const [quizQuestions, setQuizQuestions] = useState([]);
-
-  const startGame = () => {
-    setIsOnStartScreen(false);
-  };
+  const [isStart, setIsStart] = useState(false);
+  const [restart, setRestart] = useState(false);
+  const [quizData, setQuizData] = useState([]);
+  const [isCheckAnswers, setIsCheckAnswers] = useState(false);
+  const [result, setResult] = useState(0);
 
   useEffect(() => {
     const getQuiz = async () => {
       try {
         const res = await fetch("https://opentdb.com/api.php?amount=5");
         const data = await res.json();
-        setQuizQuestions(data.results);
+
+        const mutatedData = data.results.map((result) => {
+          console.log(result.correct_answer);
+          const decodedQuestion = decodedString(result.question);
+          const decodedCorrectAnswer = decodedString(result.correct_answer);
+          const allAnswers = [
+            ...result.incorrect_answers,
+            result.correct_answer,
+          ];
+          const decodedAnswers = allAnswers.map((answer) => {
+            return decodedString(answer);
+          });
+          shuffle(decodedAnswers);
+
+          return {
+            groupId: nanoid(),
+            question: decodedQuestion,
+            correctAnswer: decodedCorrectAnswer,
+            answers: decodedAnswers.map((e) => ({
+              value: e,
+              id: nanoid(),
+              isChosen: false,
+            })),
+          };
+        });
+        setQuizData(mutatedData);
       } catch (error) {
         console.log(error);
       }
     };
     getQuiz();
-  }, []);
+  }, [restart]);
 
-  console.log(quizQuestions);
+  const quizElements = quizData.map((el) => {
+    return (
+      <Quiz
+        key={el.groupId}
+        question={el.question}
+        answers={el.answers}
+        setQuizData={setQuizData}
+        groupId={el.groupId}
+        correctAnswer={el.correctAnswer}
+        isCheckAnswers={isCheckAnswers}
+        setResult={setResult}
+      />
+    );
+  });
 
-  const getQuizElements = quizQuestions.map((e) => (
-    <Quiz
-      key={nanoid()}
-      id={nanoid()}
-      question={e.question}
-      correctAnswer={e.correct_answer}
-      incorrectAnswers={e.incorrect_answers}
-      type={e.type}
-    />
-  ));
+  const restartGame = () => {
+    setRestart((oldRestart) => !oldRestart);
+    setIsCheckAnswers(false);
+    setResult(0);
+  };
 
   return (
     <main className="main--container">
       <BackgroundImages />
-      {isOnStartScreen ? (
-        <StartScreen startGame={startGame} />
+      {!isStart ? (
+        <StartScreen startGame={() => setIsStart(true)} />
       ) : (
         <div className="quiz--container">
-          {getQuizElements}
-          <button className="check--btn btn">Check answers</button>
+          {quizElements}
+          {!isCheckAnswers && (
+            <button
+              onClick={() => setIsCheckAnswers(true)}
+              className="check--btn btn"
+            >
+              Check answers
+            </button>
+          )}
+          {isCheckAnswers && (
+            <div className="end--game__footer">
+              <h3>You scored {result}/5 correct answers</h3>
+              <button onClick={restartGame} className="restart--btn btn">
+                Play again
+              </button>
+            </div>
+          )}
         </div>
       )}
     </main>
