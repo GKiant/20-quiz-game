@@ -21,20 +21,18 @@ const App = () => {
         const mutatedData = data.results.map((result) => {
           const decodedQuestion = decodedString(result.question);
           const decodedCorrectAnswer = decodedString(result.correct_answer);
-          const allAnswers = [
-            ...result.incorrect_answers,
-            result.correct_answer,
-          ];
-          const decodedAnswers = allAnswers.map((answer) => {
+          const decodedAnswers = result.incorrect_answers.map((answer) => {
             return decodedString(answer);
           });
-          shuffle(decodedAnswers);
+          const allAnswers = [...decodedAnswers, decodedCorrectAnswer];
+
+          shuffle(allAnswers);
 
           return {
             groupId: nanoid(),
             question: decodedQuestion,
             correctAnswer: decodedCorrectAnswer,
-            answers: decodedAnswers.map((e) => ({
+            answers: allAnswers.map((e) => ({
               value: e,
               id: nanoid(),
               isChosen: false,
