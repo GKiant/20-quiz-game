@@ -19,7 +19,6 @@ const App = () => {
         const data = await res.json();
 
         const mutatedData = data.results.map((result) => {
-          console.log(result.correct_answer);
           const decodedQuestion = decodedString(result.question);
           const decodedCorrectAnswer = decodedString(result.correct_answer);
           const allAnswers = [
