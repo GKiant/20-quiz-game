@@ -61,7 +61,6 @@ const App = () => {
       />
     );
   });
-  console.log(quizData);
 
   const restartGame = () => {
     setRestart((oldRestart) => !oldRestart);
