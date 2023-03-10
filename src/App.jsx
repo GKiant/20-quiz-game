@@ -51,16 +51,17 @@ const App = () => {
     return (
       <Quiz
         key={el.groupId}
+        groupId={el.groupId}
         question={el.question}
         answers={el.answers}
-        setQuizData={setQuizData}
-        groupId={el.groupId}
         correctAnswer={el.correctAnswer}
         isCheckAnswers={isCheckAnswers}
+        setQuizData={setQuizData}
         setResult={setResult}
       />
     );
   });
+  console.log(quizData);
 
   const restartGame = () => {
     setRestart((oldRestart) => !oldRestart);
@@ -76,17 +77,18 @@ const App = () => {
       ) : (
         <div className="quiz--container">
           {quizElements}
-          {!isCheckAnswers && (
+          {!isCheckAnswers ? (
             <button
               onClick={() => setIsCheckAnswers(true)}
               className="check--btn btn"
             >
               Check answers
             </button>
-          )}
-          {isCheckAnswers && (
+          ) : (
             <div className="end--game__footer">
-              <h3>You scored {result}/5 correct answers</h3>
+              <h3>
+                You scored {result}/{quizData.length} correct answers.
+              </h3>
               <button onClick={restartGame} className="restart--btn btn">
                 Play again
               </button>
